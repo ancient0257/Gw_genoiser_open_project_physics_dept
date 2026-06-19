@@ -1,0 +1,18 @@
+# Core scientific stack
+numpy>=1.24
+scipy>=1.11
+matplotlib>=3.7
+
+# Deep learning
+torch>=2.2
+torchvision>=0.17    # only needed if adding image-based diagnostics
+
+# Gravitational wave utilities
+# gwpy>=3.0.7          # TimeSeries.fetch_open_data, HDF5 I/O
+# pycbc>=2.3.3         # matched-filter SNR, waveform generation
+
+# HDF5 access (gwpy fallback)
+h5py>=3.9
+
+# Progress bars / utilities
+tqdm>=4.66

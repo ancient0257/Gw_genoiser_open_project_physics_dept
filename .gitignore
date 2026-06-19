@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+venv/
+.env
+
+# Model Checkpoints and Data
+checkpoints/
+data/strain/
+results/
+results.zip
+events (1).csv
+
+# IDE
+.vscode/
+.idea/

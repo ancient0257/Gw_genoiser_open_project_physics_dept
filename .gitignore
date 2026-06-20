@@ -7,12 +7,13 @@ __pycache__/
 venv/
 .env
 
-# Model Checkpoints and Data
-checkpoints/
+# Large data files
 data/strain/
-results/
 results.zip
-events (1).csv
+
+# Large model checkpoints — keep only best.pt tracked via LFS or excluded
+checkpoints/*.pt
+!checkpoints/.gitkeep
 
 # IDE
 .vscode/

@@ -178,10 +178,10 @@ def evaluate_all(results: list[EventResult]) -> dict:
         "mean_mse":                   float(np.mean(mses)),
         "mean_noise_power_reduction": float(np.mean(nprs)),
         "mean_overlap":               float(np.mean(overlaps)) if overlaps else None,
-        "pass_snr":  sum(r.passes_snr  for r in results),
-        "pass_mse":  sum(r.passes_mse  for r in results),
-        "pass_npr":  sum(r.passes_npr  for r in results),
-        "pass_all":  sum(r.passes_all  for r in results),
+        "pass_snr":  int(sum(r.passes_snr  for r in results)),
+        "pass_mse":  int(sum(r.passes_mse  for r in results)),
+        "pass_npr":  int(sum(r.passes_npr  for r in results)),
+        "pass_all":  int(sum(r.passes_all  for r in results)),
         "thresholds": THRESHOLDS,
         "per_event": [
             {
@@ -193,7 +193,7 @@ def evaluate_all(results: list[EventResult]) -> dict:
                 "noise_power_reduction":  round(r.noise_power_reduction, 4),
                 "overlap":                round(r.overlap, 4) if not np.isnan(r.overlap) else None,
                 "psnr_db":                round(r.psnr_db, 2) if not np.isnan(r.psnr_db) else None,
-                "pass_all":               r.passes_all,
+                "pass_all":               bool(r.passes_all),
             }
             for r in results
         ],

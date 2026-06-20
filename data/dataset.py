@@ -276,6 +276,12 @@ class GWStrainDataset(Dataset):
 
 # ── DataLoader factory ────────────────────────────────────────────────────────
 
+def _worker_init(worker_id):
+    np.random.seed(42 ^ worker_id)
+
+def _collate_fn(b):
+    return torch.utils.data.default_collate(b)
+
 def make_dataloaders(
     hdf5_paths:  list[Path],
     train_frac:  float = 0.70,
@@ -294,14 +300,18 @@ def make_dataloaders(
     g    = torch.Generator().manual_seed(seed)
     tr_s, va_s, te_s = random_split(dataset, [n_tr, n_va, n_te], generator=g)
 
-    def _loader(ds, shuffle):
+    def _loader(ds, is_train):
         return DataLoader(
-            ds, batch_size=batch_size, shuffle=shuffle,
-            num_workers=num_workers, pin_memory=True,
+            ds,
+            batch_size=batch_size,
+            shuffle=is_train,
+            drop_last=is_train,
+            num_workers=num_workers,
+            pin_memory=True,
             persistent_workers=(num_workers > 0),
+            worker_init_fn=_worker_init,
+            collate_fn=_collate_fn,
             prefetch_factor=2 if num_workers > 0 else None,
-            drop_last=shuffle,
-            worker_init_fn=lambda wid: np.random.seed(seed ^ wid),
         )
 
     return _loader(tr_s, True), _loader(va_s, False), _loader(te_s, False), dataset

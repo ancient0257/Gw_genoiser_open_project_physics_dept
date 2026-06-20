@@ -272,10 +272,18 @@ def train(args=None):
     dataset    = None
 
     if not hdf5_files:
-        log.warning("No HDF5 files — synthetic fallback.")
+        log.warning("No HDF5 files — synthetic fallback (using BBH chirps).")
         from torch.utils.data import TensorDataset, DataLoader, random_split
+        from utils.preprocessing import inject_bbh_chirp, normalise_segment
+        import numpy as np
         N = 500; L = int(cfg.data.segment_duration * cfg.data.sample_rate)
-        ds  = TensorDataset(torch.randn(N, 1, L), torch.randn(N, 1, L))
+        X, Y = [], []
+        for _ in range(N):
+            noise = np.random.randn(L).astype(np.float32)
+            noisy, clean = inject_bbh_chirp(noise, sample_rate=cfg.data.sample_rate)
+            X.append(torch.from_numpy(normalise_segment(noisy)).unsqueeze(0))
+            Y.append(torch.from_numpy(normalise_segment(clean)).unsqueeze(0))
+        ds  = TensorDataset(torch.stack(X), torch.stack(Y))
         g   = torch.Generator().manual_seed(cfg.train.seed)
         ntr = int(N * cfg.data.train_frac); nva = int(N * cfg.data.val_frac)
         trs, vas, _ = random_split(ds, [ntr, nva, N-ntr-nva], generator=g)
